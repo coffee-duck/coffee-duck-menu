@@ -59,11 +59,10 @@ async function fetchBackgroundData() {
     }
 
     try {
-        // Bypass browser cache with timestamp parameter while supporting Google Apps Script redirects
-        const url = `${CONFIG.API_URL}?t=${Date.now()}`;
-        const response = await fetch(url, { method: "GET", redirect: "follow" });
+        // Fetch from Google Apps Script Web App API cleanly
+        const response = await fetch(CONFIG.API_URL, { method: "GET" });
         
-        if (!response.ok) throw new Error("Network response was not ok");
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         
         const result = await response.json();
         if (result.error) throw new Error(result.error);
@@ -85,8 +84,10 @@ async function fetchBackgroundData() {
         }
         revealSite();
     } catch (error) {
-        console.error("Background fetch failed:", error);
-        if (menuData.length === 0) {
+        // Silent handling for background refresh if data is already displayed
+        if (menuData && menuData.length > 0) {
+            console.warn("Background sync paused (Will retry next interval):", error.message);
+        } else {
             showError("Failed to load menu. Please check your connection.");
         }
         revealSite();
