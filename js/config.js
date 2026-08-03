@@ -6,8 +6,8 @@ const CONFIG = {
     // Disable cache completely
     CACHE_DURATION_MS: 0,
 
-    // Auto refresh every 3 seconds
-    AUTO_REFRESH_INTERVAL: 3000,
+    // Auto refresh every 30 seconds
+    AUTO_REFRESH_INTERVAL: 30000,
 
     // Auto-scroll settings
     AUTO_SCROLL: {

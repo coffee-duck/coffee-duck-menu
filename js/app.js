@@ -59,9 +59,9 @@ async function fetchBackgroundData() {
     }
 
     try {
-        // Bypass browser cache to ensure we get the absolute latest sheet data
+        // Bypass browser cache with timestamp parameter while supporting Google Apps Script redirects
         const url = `${CONFIG.API_URL}?t=${Date.now()}`;
-        const response = await fetch(url, { method: "GET", cache: "no-store" });
+        const response = await fetch(url, { method: "GET", redirect: "follow" });
         
         if (!response.ok) throw new Error("Network response was not ok");
         
