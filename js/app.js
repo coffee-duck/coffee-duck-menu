@@ -60,9 +60,12 @@ async function fetchBackgroundData() {
 
     try {
         // Fetch from Google Apps Script Web App API cleanly
-        const response = await fetch(CONFIG.API_URL, { method: "GET" });
+        const response = await fetch(CONFIG.API_URL, { 
+            method: "GET",
+            mode: "cors"
+        });
         
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        if (!response.ok) throw new Error(`HTTP status: ${response.status}`);
         
         const result = await response.json();
         if (result.error) throw new Error(result.error);
@@ -86,9 +89,9 @@ async function fetchBackgroundData() {
     } catch (error) {
         // Silent handling for background refresh if data is already displayed
         if (menuData && menuData.length > 0) {
-            console.warn("Background sync paused (Will retry next interval):", error.message);
+            console.warn("Background sync paused (Check Apps Script access):", error.message);
         } else {
-            showError("Failed to load menu. Please check your connection.");
+            showError("Failed to load menu. Please make sure Google Apps Script Web App is deployed to 'Anyone'.");
         }
         revealSite();
     }
