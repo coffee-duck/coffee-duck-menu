@@ -1,0 +1,7 @@
+node_modules/
+__pycache__/
+*.pyc
+*.sqlite
+.DS_Store
+.vscode/
+.idea/
