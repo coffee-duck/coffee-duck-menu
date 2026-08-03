@@ -21,12 +21,14 @@ async function initMenu() {
 
     if (cached) {
         // INSTANT RENDER: We have cached data. Render immediately!
-        console.log("Serving from cache for instant load...");
-        menuData = JSON.parse(cached);
-        renderMenu();
-        revealSite();
-        initAutoScroll();
-        
+        try {
+            menuData = JSON.parse(cached);
+            renderMenu();
+            revealSite();
+            initAutoScroll();
+        } catch (e) {
+            localStorage.removeItem('menuData');
+        }
         // 2. REVALIDATE: Fetch fresh data silently in the background
         fetchBackgroundData();
     } else {
@@ -39,7 +41,6 @@ async function initMenu() {
         } catch (error) {
             showError("Failed to load menu. Please check your connection.");
             revealSite();
-            console.error("Initialization error:", error);
         }
     }
 }
@@ -54,7 +55,6 @@ function revealSite() {
 // ==========================================
 async function fetchBackgroundData() {
     if (!CONFIG.API_URL || CONFIG.API_URL === "PASTE_YOUR_WEB_APP_URL_HERE") {
-        console.error("API URL not configured.");
         return;
     }
 
@@ -76,21 +76,14 @@ async function fetchBackgroundData() {
 
         // INTELLIGENT CACHING: Only re-render if data ACTUALLY changed
         if (newDataString !== oldDataString) {
-            console.log("New data detected! Updating UI silently...");
             menuData = newData;
             localStorage.setItem('menuData', newDataString);
-            
-            // Re-render UI
             renderMenu();
-        } else {
-            console.log("Data is up to date.");
         }
         revealSite();
     } catch (error) {
         // Silent handling for background refresh if data is already displayed
-        if (menuData && menuData.length > 0) {
-            console.warn("Background sync paused (Check Apps Script access):", error.message);
-        } else {
+        if (!menuData || menuData.length === 0) {
             showError("Failed to load menu. Please make sure Google Apps Script Web App is deployed to 'Anyone'.");
         }
         revealSite();
