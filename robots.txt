@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://coffee-duck.github.io/coffee-duck-menu/sitemap.xml
